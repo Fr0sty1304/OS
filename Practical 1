@@ -1,0 +1,58 @@
+#!/bin/bash
+
+file="new.txt"
+
+while true
+do
+    echo "------ Address Book ------"
+    echo "1. Create File"
+    echo "2. Insert Record"
+    echo "3. Display Records"
+    echo "4. Search Record"
+    echo "5. Delete Record"
+    echo "6. Modify Record"
+    echo "7. Exit"
+    echo "Enter choice:"
+    read ch
+
+    case $ch in
+    1)
+        touch "$file"
+        echo "File Created"
+        ;;
+    2)
+        echo "Enter ID Name Mobile City:"
+        read ID Name Mobile City
+        echo "$ID $Name $Mobile $City" >> "$file"
+        echo "Record Inserted"
+        ;;
+    3)
+        cat "$file"
+        ;;
+    4)
+        echo "Enter name to search:"
+        read Name
+        grep -i "$Name" "$file"
+        ;;
+    5)
+        echo "Enter ID to delete:"
+        read ID
+        grep -v "^$ID " "$file" > temp.txt
+        mv temp.txt "$file"
+        echo "Record Deleted"
+        ;;
+    6)
+        echo "Enter ID Name Mobile City:"
+        read ID Name Mobile City
+        sed -i "s/^$ID .*/$ID $Name $Mobile $City/" "$file"
+        echo "Record Modified"
+        ;;
+    7)
+        echo "Exiting"
+        exit
+        ;;
+    *)
+        echo "Invalid Choice"
+        ;;
+    esac
+done
