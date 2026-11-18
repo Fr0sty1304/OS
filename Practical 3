@@ -1,0 +1,65 @@
+#include <stdio.h>
+#include <pthread.h>
+#include <semaphore.h>
+
+int buffer[5], in = 0, out = 0;
+sem_t mutex, empty, full;
+
+void *producer(void *arg)
+{
+    int x = *(int *)arg;
+
+    sem_wait(&empty);
+    sem_wait(&mutex);
+
+    buffer[in] = x;
+    in = (in + 1) % 5;
+    printf("Producer : %d\n", x);
+
+    sem_post(&mutex);
+    sem_post(&full);
+
+    return NULL;
+}
+
+void *consumer(void *arg)
+{
+    for (int i = 0; i < 5; i++)
+    {
+        sem_wait(&full);
+        sem_wait(&mutex);
+
+        int x = buffer[out];
+        out = (out + 1) % 5;
+        printf("Consumer : %d\n", x);
+
+        sem_post(&mutex);
+        sem_post(&empty);
+    }
+
+    return NULL;
+}
+
+int main()
+{
+    pthread_t p[5], c;
+    int a[5] = {10, 11, 12, 13, 14};
+
+    sem_init(&mutex, 0, 1);
+    sem_init(&empty, 0, 5);
+    sem_init(&full, 0, 0);
+
+    pthread_create(&c, NULL, consumer, NULL);
+
+    for (int i = 0; i < 5; i++)
+        pthread_create(&p[i], NULL, producer, &a[i]);
+
+    for (int i = 0; i < 5; i++)
+        pthread_join(p[i], NULL);
+
+    pthread_join(c, NULL);
+
+    return 0;
+}
+
+Compile/run: gcc producer_consumer.c -o pc -pthread   |   ./pc
