@@ -1,0 +1,64 @@
+#include <stdio.h>
+#include <pthread.h>
+#include <semaphore.h>
+#include <unistd.h>
+
+int readcount = 0;
+sem_t r, w;
+
+void *reader(void *arg)
+{
+    sem_wait(&r);
+    readcount++;
+
+    if (readcount == 1)
+        sem_wait(&w);
+
+    sem_post(&r);
+
+    printf("Reader is reading\n");
+    sleep(1);
+
+    sem_wait(&r);
+    readcount--;
+
+    if (readcount == 0)
+        sem_post(&w);
+
+    sem_post(&r);
+    return NULL;
+}
+
+void *writer(void *arg)
+{
+    sem_wait(&w);
+    printf("Writer is writing\n");
+    sleep(1);
+    sem_post(&w);
+
+    return NULL;
+}
+
+int main()
+{
+    pthread_t rd[5], wr[2];
+
+    sem_init(&r, 0, 1);
+    sem_init(&w, 0, 1);
+
+    for (int i = 0; i < 5; i++)
+        pthread_create(&rd[i], NULL, reader, NULL);
+
+    for (int i = 0; i < 2; i++)
+        pthread_create(&wr[i], NULL, writer, NULL);
+
+    for (int i = 0; i < 5; i++)
+        pthread_join(rd[i], NULL);
+
+    for (int i = 0; i < 2; i++)
+        pthread_join(wr[i], NULL);
+
+    return 0;
+}
+
+Compile/run: gcc reader_writer.c -o reader_writer -pthread   |   ./reader_writer
