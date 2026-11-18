@@ -1,0 +1,110 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int main()
+{
+    int a[20], n, start, i, j, temp;
+    int head, total, visited[20] = {0};
+
+    printf("Enter number of requests: ");
+    scanf("%d", &n);
+
+    printf("Enter requests: ");
+    for (i = 0; i < n; i++)
+        scanf("%d", &a[i]);
+
+    printf("Enter initial head position: ");
+    scanf("%d", &start);
+
+    // Sort requests
+    for (i = 0; i < n; i++)
+        for (j = i + 1; j < n; j++)
+            if (a[i] > a[j])
+            {
+                temp = a[i];
+                a[i] = a[j];
+                a[j] = temp;
+            }
+
+    // SSTF
+    head = start;
+    total = 0;
+
+    printf("\nSSTF: %d", head);
+
+    for (i = 0; i < n; i++)
+    {
+        int min = 99999, pos = -1;
+
+        for (j = 0; j < n; j++)
+            if (visited[j] == 0 && abs(head - a[j]) < min)
+            {
+                min = abs(head - a[j]);
+                pos = j;
+            }
+
+        visited[pos] = 1;
+        total += abs(head - a[pos]);
+        head = a[pos];
+
+        printf(" -> %d", head);
+    }
+
+    printf("\nTotal movement = %d\n", total);
+
+    // SCAN: move higher first, go to cylinder 199, then reverse
+    head = start;
+    total = 0;
+
+    printf("\nSCAN: %d", head);
+
+    for (i = 0; i < n; i++)
+        if (a[i] >= start)
+        {
+            total += abs(head - a[i]);
+            head = a[i];
+            printf(" -> %d", head);
+        }
+
+    total += 199 - head;
+    head = 199;
+    printf(" -> %d", head);
+
+    for (i = n - 1; i >= 0; i--)
+        if (a[i] < start)
+        {
+            total += abs(head - a[i]);
+            head = a[i];
+            printf(" -> %d", head);
+        }
+
+    printf("\nTotal movement = %d\n", total);
+
+    // C-LOOK
+    head = start;
+    total = 0;
+
+    printf("\nC-LOOK: %d", head);
+
+    for (i = 0; i < n; i++)
+        if (a[i] >= start)
+        {
+            total += abs(head - a[i]);
+            head = a[i];
+            printf(" -> %d", head);
+        }
+
+    for (i = 0; i < n; i++)
+        if (a[i] < start)
+        {
+            total += abs(head - a[i]);
+            head = a[i];
+            printf(" -> %d", head);
+        }
+
+    printf("\nTotal movement = %d\n", total);
+
+    return 0;
+}
+
+Compile/run: gcc disk.c -o disk   |   ./disk
