@@ -1,0 +1,22 @@
+#include <stdio.h>
+#include <unistd.h>
+
+int main()
+{
+    int pid = fork();
+
+    if (pid == 0)
+    {
+        sleep(3);
+        printf("Child ID: %d\n", getpid());
+        printf("New Parent ID: %d\n", getppid());
+    }
+    else if (pid > 0)
+    {
+        printf("Parent exiting\n");
+    }
+
+    return 0;
+}
+
+Compile/run: gcc orphan.c -o orphan   |   ./orphan
