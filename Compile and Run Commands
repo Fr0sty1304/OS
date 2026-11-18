@@ -1,0 +1,9 @@
+Address Book	                                            bash address_book.sh
+fork / sorting / zombie / orphan	                        gcc filename.c -o output && ./output
+Producer–Consumer	                                        gcc producer_consumer.c -o pc -pthread && ./pc
+Dining Philosophers	                                      gcc dining.c -o dining -pthread && ./dining
+Banker’s Algorithm	                                      gcc banker.c -o banker && ./banker
+FIFO server/client	                                      gcc server.c -o server  |  gcc client.c -o client
+Parent–Child Pipes	                                      gcc pipe.c -o pipe && ./pipe
+Disk Scheduling	                                          gcc disk.c -o disk && ./disk
+Reader–Writer extra	                                      gcc reader_writer.c -o reader_writer -pthread && ./reader_writer
